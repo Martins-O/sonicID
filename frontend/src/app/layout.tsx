@@ -16,8 +16,9 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="min-h-screen">
+      <body className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans antialiased">
+        <div className="min-h-screen w-full relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 -z-10"></div>
           {children}
         </div>
       </body>

@@ -151,7 +151,7 @@ contract ZKVerifier is Ownable, Pausable {
                 _circuitName,
                 _user,
                 block.timestamp,
-                block.difficulty
+                block.prevrandao
             )
         );
     }

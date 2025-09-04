@@ -1,0 +1,28 @@
+{
+  "network": "sonic-testnet",
+  "chainId": 14601,
+  "timestamp": 1756989817265,
+  "deploymentDuration": 20586,
+  "deployer": "0x4A78dFC52566063f50F8cf4eD52F513AEB866A0C",
+  "deployerBalance": "30.0",
+  "contracts": {
+    "IdentityRegistry": {
+      "address": "0x221B7Cca1C385C6c81e17b086C753328AF41AAAa",
+      "txHash": "0x7726671d02943fe9beea36462ccc8105176077e4545c515aea9f686529991e92"
+    },
+    "ZKVerifier": {
+      "address": "0xCd5De20043a8aE46D80a22678b0Eb8B1078829Ce",
+      "txHash": "0xe3a33fbb4aeea7ba4851d4a8b46002abf9775bb28363e1cbf0608ff75fa59112"
+    },
+    "ReputationEngine": {
+      "address": "0x24ed030F7F62E05Eb5842bF5197c87a82397BDAC",
+      "txHash": "0xa03ad4fc18980d461064aa95927611bfb0efd1f388688a67e4a21039f6331aee"
+    }
+  },
+  "gasUsed": {
+    "IdentityRegistry": "1266536",
+    "ZKVerifier": "1733324",
+    "ReputationEngine": "2281660"
+  },
+  "environment": "development"
+}

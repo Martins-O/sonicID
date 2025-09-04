@@ -136,14 +136,14 @@ export default function AdminPage() {
               <span className="text-sm text-gray-600">Live Mode</span>
               <button
                 onClick={() => setIsLiveMode(!isLiveMode)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full $&#123;
+                className={`relative inline-flex h-6 w-11 items-center rounded-full ${
                   isLiveMode ? 'bg-green-600' : 'bg-gray-200'
-                &#125; transition-colors`}
+                } transition-colors`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition $&#123;
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
                     isLiveMode ? 'translate-x-6' : 'translate-x-1'
-                  &#125;`}
+                  }`}
                 />
               </button>
               {isLiveMode && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>}
@@ -256,7 +256,7 @@ export default function AdminPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full $&#123;getSeverityColor(alert.severity)&#125;`}>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSeverityColor(alert.severity)}`}>
                           {alert.severity.toUpperCase()}
                         </span>
                         <span className="text-sm text-gray-600">{alert.type.replace('_', ' ').toUpperCase()}</span>

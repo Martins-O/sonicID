@@ -144,13 +144,13 @@ export default function IdentityWallet() {
                                   verificationLevels.findIndex(l => l.level === level.level)
               
               return (
-                <div key={level.level} className={`p-4 rounded-lg border $&#123;
+                <div key={level.level} className={`p-4 rounded-lg border ${
                   isCurrentLevel 
                     ? 'border-blue-200 bg-blue-50' 
                     : isLowerLevel 
                       ? 'border-gray-200 bg-gray-50' 
                       : 'border-gray-200 hover:border-blue-300'
-                &#125;`}>
+                }`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-medium text-gray-900">{level.name}</div>

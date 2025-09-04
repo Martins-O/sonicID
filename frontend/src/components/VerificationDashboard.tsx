@@ -97,14 +97,14 @@ export default function VerificationDashboard() {
           <span className="text-sm text-gray-600">Real-time updates</span>
           <button
             onClick={() => setIsRealTime(!isRealTime)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full $&#123;
+            className={`relative inline-flex h-6 w-11 items-center rounded-full ${
               isRealTime ? 'bg-blue-600' : 'bg-gray-200'
-            &#125; transition-colors`}
+            } transition-colors`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition $&#123;
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
                 isRealTime ? 'translate-x-6' : 'translate-x-1'
-              &#125;`}
+              }`}
             />
           </button>
         </div>
@@ -205,12 +205,12 @@ export default function VerificationDashboard() {
                     {verification.type}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full $&#123;getStatusColor(verification.status)&#125;`}>
+                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(verification.status)}`}>
                       {verification.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full $&#123;getRiskColor(verification.riskScore)&#125;`}>
+                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getRiskColor(verification.riskScore)}`}>
                       {verification.riskScore}
                     </span>
                   </td>
