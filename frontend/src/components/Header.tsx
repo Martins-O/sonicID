@@ -135,10 +135,9 @@ export default function Header() {
               <h1 className="text-2xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">SonicID</h1>
             </div>
             <nav className="hidden md:ml-10 md:flex md:space-x-6">
-              <a href="/" className="text-slate-600 hover:text-slate-900 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/50">Demo</a>
-              <a href="/welcome" className="text-slate-600 hover:text-slate-900 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/50">Welcome</a>
-              <a href="/how-it-works" className="text-slate-600 hover:text-slate-900 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/50">How It Works</a>
-              <a href="/about" className="text-slate-600 hover:text-slate-900 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/50">About</a>
+              <a href="/" className="text-slate-600 hover:text-slate-900 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/50">Home</a>
+              <a href="/identity-demo" className="text-slate-600 hover:text-slate-900 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/50">Identity Demo</a>
+              <a href="/demo" className="text-slate-600 hover:text-slate-900 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/50">E-commerce Demo</a>
             </nav>
           </div>
           
