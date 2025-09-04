@@ -1,5 +1,10 @@
 {
-  "/page": "app/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/how-it-works/page": "app/how-it-works/page.js",
+  "/about/page": "app/about/page.js",
   "/identity-demo/page": "app/identity-demo/page.js",
-  "/demo/page": "app/demo/page.js"
+  "/page": "app/page.js",
+  "/demo/page": "app/demo/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/welcome/page": "app/welcome/page.js"
 }
