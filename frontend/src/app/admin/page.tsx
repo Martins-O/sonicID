@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 interface AdminMetrics {
   totalUsers: number
@@ -356,6 +357,7 @@ export default function AdminPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

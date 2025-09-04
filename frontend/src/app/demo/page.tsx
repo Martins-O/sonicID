@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import { useWallet } from '@/hooks/useWallet'
 
 interface Product {
   id: string
@@ -20,6 +22,7 @@ const products: Product[] = [
 ]
 
 export default function DemoPage() {
+  const { isConnected } = useWallet()
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [verificationStatus, setVerificationStatus] = useState<'none' | 'verifying' | 'success' | 'failed'>('none')
   const [userProfile, setUserProfile] = useState({
@@ -30,6 +33,12 @@ export default function DemoPage() {
   })
 
   const handleInstantKYC = async (product: Product) => {
+    // Check if wallet is connected first
+    if (!isConnected) {
+      alert('Please connect your wallet to proceed with verification.')
+      return
+    }
+
     setSelectedProduct(product)
     setVerificationStatus('verifying')
     
@@ -112,9 +121,14 @@ export default function DemoPage() {
                 
                 <button
                   onClick={() => handleInstantKYC(product)}
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                    isConnected 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                  disabled={!isConnected}
                 >
-                  Buy with Instant KYC
+                  {isConnected ? 'Buy with Instant KYC' : 'Connect Wallet to Buy'}
                 </button>
               </div>
             </div>
@@ -260,6 +274,7 @@ export default function DemoPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

@@ -2,8 +2,11 @@
 
 import { useState } from 'react'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import { useWallet } from '@/hooks/useWallet'
 
 export default function HomePage() {
+  const { isConnected } = useWallet()
   const [activeTab, setActiveTab] = useState<'welcome' | 'how-it-works' | 'about'>('welcome')
   const [currentStep, setCurrentStep] = useState(1)
 
@@ -121,20 +124,34 @@ export default function HomePage() {
             The future of digital identity verification through zero-knowledge technology and decentralized infrastructure.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <a 
-              href="/identity-demo"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              Try Interactive Demo
-            </a>
-            <a 
-              href="/demo"
-              className="bg-white text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200"
-            >
-              E-commerce Demo
-            </a>
-          </div>
+          {isConnected ? (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+              <a 
+                href="/identity-demo"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                Try Interactive Demo
+              </a>
+              <a 
+                href="/demo"
+                className="bg-white text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200"
+              >
+                E-commerce Demo
+              </a>
+            </div>
+          ) : (
+            <div className="text-center mb-12">
+              <div className="bg-slate-50 border border-slate-200 px-8 py-6 rounded-xl max-w-md mx-auto">
+                <svg className="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">Connect Your Wallet</h3>
+                <p className="text-slate-600 text-sm">
+                  Connect your wallet to access interactive demos and experience SonicID's zero-knowledge verification.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tab Navigation */}
@@ -510,25 +527,43 @@ export default function HomePage() {
         <div className="text-center bg-gradient-to-br from-blue-50 to-indigo-50 p-12 rounded-2xl border border-blue-200 mt-16">
           <h2 className="text-3xl font-bold text-slate-800 mb-4">Ready to Get Started?</h2>
           <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
-            Experience the future of digital identity verification with our interactive demos
+            {isConnected 
+              ? "Experience the future of digital identity verification with our interactive demos"
+              : "Connect your wallet to access our interactive demos and experience zero-knowledge verification"
+            }
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a 
-              href="/identity-demo"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              Try Identity Demo
-            </a>
-            <a 
-              href="/demo"
-              className="bg-white text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200"
-            >
-              E-commerce Demo
-            </a>
-          </div>
+          {isConnected ? (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a 
+                href="/identity-demo"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                Try Identity Demo
+              </a>
+              <a 
+                href="/demo"
+                className="bg-white text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200"
+              >
+                E-commerce Demo
+              </a>
+            </div>
+          ) : (
+            <div className="bg-white/70 backdrop-blur-sm px-8 py-6 rounded-xl border border-white/30 max-w-lg mx-auto">
+              <div className="flex items-center justify-center gap-3 text-slate-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <p className="font-semibold">Wallet connection required to access demos</p>
+              </div>
+              <p className="text-sm text-slate-500 mt-2">
+                Click "Connect Wallet" in the header above to get started
+              </p>
+            </div>
+          )}
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

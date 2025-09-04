@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useWallet } from '@/hooks/useWallet'
 
 type VerificationLevel = 'BASIC' | 'GOVERNMENT_ID' | 'BIOMETRIC' | 'MULTI_SOURCE' | 'INSTITUTIONAL'
 
@@ -13,6 +14,7 @@ interface Identity {
 }
 
 export default function IdentityWallet() {
+  const { isConnected } = useWallet()
   const [identity, setIdentity] = useState<Identity | null>(null)
   const [isRegistering, setIsRegistering] = useState(false)
   const [selectedLevel, setSelectedLevel] = useState<VerificationLevel>('BASIC')
@@ -30,6 +32,11 @@ export default function IdentityWallet() {
   ]
 
   const handleRegisterIdentity = async () => {
+    if (!isConnected) {
+      alert('Please connect your wallet to register your identity.')
+      return
+    }
+
     setIsRegistering(true)
     
     // Simulate registration process
@@ -53,6 +60,11 @@ export default function IdentityWallet() {
   const handleUpgradeLevel = async (newLevel: VerificationLevel) => {
     if (!identity) return
     
+    if (!isConnected) {
+      alert('Please connect your wallet to upgrade your verification level.')
+      return
+    }
+    
     setIsRegistering(true)
     await new Promise(resolve => setTimeout(resolve, 1500))
     
@@ -67,6 +79,11 @@ export default function IdentityWallet() {
   }
 
   const handleGenerateZKProof = async () => {
+    if (!isConnected) {
+      alert('Please connect your wallet to generate zero-knowledge proofs.')
+      return
+    }
+
     setIsGeneratingProof(true)
     setGeneratedProof(null)
     
@@ -170,15 +187,19 @@ export default function IdentityWallet() {
             
             <button
               onClick={handleRegisterIdentity}
-              disabled={isRegistering}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              disabled={isRegistering || !isConnected}
+              className={`px-8 py-4 rounded-xl font-bold transition-all duration-200 shadow-lg transform ${
+                isConnected && !isRegistering
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl hover:scale-105'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               {isRegistering ? (
                 <div className="flex items-center gap-3">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   <span>Registering...</span>
                 </div>
-              ) : 'Register Identity'}
+              ) : !isConnected ? 'Connect Wallet to Register' : 'Register Identity'}
             </button>
           </div>
         )}
@@ -219,17 +240,19 @@ export default function IdentityWallet() {
                       ) : (
                         <button
                           onClick={() => handleUpgradeLevel(level.level as VerificationLevel)}
-                          disabled={isRegistering}
-                          className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-sm font-bold rounded-xl hover:from-emerald-700 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:hover:scale-100"
+                          disabled={isRegistering || !isConnected}
+                          className={`px-6 py-3 text-sm font-bold rounded-xl transition-all duration-200 shadow-lg transform ${
+                            isConnected && !isRegistering
+                              ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white hover:from-emerald-700 hover:to-green-700 hover:shadow-xl hover:scale-105'
+                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          }`}
                         >
                           {isRegistering ? (
                             <div className="flex items-center gap-2">
                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                               <span>Processing...</span>
                             </div>
-                          ) : (
-                            'Upgrade'
-                          )}
+                          ) : !isConnected ? 'Connect Wallet' : 'Upgrade'}
                         </button>
                       )}
                     </div>
@@ -265,17 +288,19 @@ export default function IdentityWallet() {
             
             <button 
               onClick={handleGenerateZKProof}
-              disabled={isGeneratingProof}
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:hover:scale-100"
+              disabled={isGeneratingProof || !isConnected}
+              className={`w-full px-8 py-4 rounded-xl font-bold transition-all duration-200 shadow-lg transform ${
+                isConnected && !isGeneratingProof
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 hover:shadow-xl hover:scale-[1.02]'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               {isGeneratingProof ? (
                 <div className="flex items-center justify-center gap-3">
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   <span>Generating ZK Proof...</span>
                 </div>
-              ) : (
-                'Generate ZK Proof'
-              )}
+              ) : !isConnected ? 'Connect Wallet to Generate Proof' : 'Generate ZK Proof'}
             </button>
             
             {generatedProof && (

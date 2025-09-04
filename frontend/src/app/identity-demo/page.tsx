@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 import IdentityWallet from '@/components/IdentityWallet'
 import VerificationDashboard from '@/components/VerificationDashboard'
 
@@ -105,6 +106,7 @@ export default function IdentityDemoPage() {
           {activeTab === 'dashboard' && <VerificationDashboard />}
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

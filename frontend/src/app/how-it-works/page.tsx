@@ -18,7 +18,6 @@ export default function HowItWorksPage() {
       ]
     },
     {
-      title: "Sonic Blockchain Integration",
       title: "Decentralized Verification",
       description: "Distributed verification network ensuring no single point of failure",
       details: [
