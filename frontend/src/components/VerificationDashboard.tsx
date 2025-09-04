@@ -20,51 +20,89 @@ interface RecentVerification {
 
 export default function VerificationDashboard() {
   const [metrics, setMetrics] = useState<VerificationMetrics>({
-    totalVerifications: 12847,
-    successRate: 94.2,
-    averageTime: 2.3,
-    fraudDetected: 15
+    totalVerifications: 0,
+    successRate: 0,
+    averageTime: 0,
+    fraudDetected: 0
   })
 
-  const [recentVerifications, setRecentVerifications] = useState<RecentVerification[]>([
-    { id: '1', user: '0x1234...5678', type: 'Age Verification', status: 'success', timestamp: Date.now() - 300000, riskScore: 15 },
-    { id: '2', user: '0xabcd...efgh', type: 'Identity Verification', status: 'success', timestamp: Date.now() - 600000, riskScore: 8 },
-    { id: '3', user: '0x5678...9012', type: 'Location Verification', status: 'pending', timestamp: Date.now() - 900000, riskScore: 45 },
-    { id: '4', user: '0xijkl...mnop', type: 'Credential Verification', status: 'failed', timestamp: Date.now() - 1200000, riskScore: 78 },
-    { id: '5', user: '0x9876...5432', type: 'Age Verification', status: 'success', timestamp: Date.now() - 1500000, riskScore: 12 }
-  ])
+  const [recentVerifications, setRecentVerifications] = useState<RecentVerification[]>([])
 
   const [isRealTime, setIsRealTime] = useState(false)
+  const [isSimulating, setIsSimulating] = useState(false)
+  const [hasStarted, setHasStarted] = useState(false)
 
-  // Simulate real-time updates
+  const startDemo = async () => {
+    setIsSimulating(true)
+    setHasStarted(true)
+    
+    // Initial setup with some base metrics
+    setMetrics({
+      totalVerifications: 1,
+      successRate: 100,
+      averageTime: 2.1,
+      fraudDetected: 0
+    })
+    
+    // Add first verification
+    const firstVerification: RecentVerification = {
+      id: '1',
+      user: '0x1234...5678',
+      type: 'Age Verification',
+      status: 'success',
+      timestamp: Date.now(),
+      riskScore: 15
+    }
+    setRecentVerifications([firstVerification])
+    setIsSimulating(false)
+  }
+
+  const addNewVerification = async () => {
+    setIsSimulating(true)
+    
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    const verificationTypes = ['Age Verification', 'Identity Verification', 'Location Verification', 'Credential Verification']
+    const isSuccess = Math.random() > 0.15 // 85% success rate
+    
+    const newVerification: RecentVerification = {
+      id: Date.now().toString(),
+      user: `0x${Math.random().toString(16).substr(2, 4)}...${Math.random().toString(16).substr(2, 4)}`,
+      type: verificationTypes[Math.floor(Math.random() * verificationTypes.length)],
+      status: isSuccess ? 'success' : 'failed',
+      timestamp: Date.now(),
+      riskScore: isSuccess ? Math.floor(Math.random() * 30) : Math.floor(Math.random() * 50 + 50)
+    }
+    
+    setRecentVerifications(prev => [newVerification, ...prev].slice(0, 10))
+    
+    setMetrics(prev => {
+      const newTotal = prev.totalVerifications + 1
+      const successCount = recentVerifications.filter(v => v.status === 'success').length + (isSuccess ? 1 : 0)
+      const newSuccessRate = (successCount / newTotal) * 100
+      const fraudIncrement = !isSuccess && newVerification.riskScore > 70 ? 1 : 0
+      
+      return {
+        totalVerifications: newTotal,
+        successRate: newSuccessRate,
+        averageTime: Math.max(1.5, Math.min(3.5, prev.averageTime + (Math.random() - 0.5) * 0.3)),
+        fraudDetected: prev.fraudDetected + fraudIncrement
+      }
+    })
+    
+    setIsSimulating(false)
+  }
+
+  // Real-time simulation
   useEffect(() => {
-    if (isRealTime) {
+    if (isRealTime && hasStarted) {
       const interval = setInterval(() => {
-        setMetrics(prev => ({
-          ...prev,
-          totalVerifications: prev.totalVerifications + Math.floor(Math.random() * 3),
-          successRate: Math.max(90, Math.min(98, prev.successRate + (Math.random() - 0.5) * 2)),
-          averageTime: Math.max(1.5, Math.min(3.5, prev.averageTime + (Math.random() - 0.5) * 0.2))
-        }))
-
-        // Add new verification occasionally
-        if (Math.random() < 0.3) {
-          const newVerification: RecentVerification = {
-            id: Date.now().toString(),
-            user: `0x${Math.random().toString(16).substr(2, 4)}...${Math.random().toString(16).substr(2, 4)}`,
-            type: ['Age Verification', 'Identity Verification', 'Location Verification'][Math.floor(Math.random() * 3)],
-            status: Math.random() > 0.1 ? 'success' : 'failed',
-            timestamp: Date.now(),
-            riskScore: Math.floor(Math.random() * 100)
-          }
-          
-          setRecentVerifications(prev => [newVerification, ...prev.slice(0, 9)])
-        }
-      }, 3000)
+        addNewVerification()
+      }, 4000)
 
       return () => clearInterval(interval)
     }
-  }, [isRealTime])
+  }, [isRealTime, hasStarted, recentVerifications])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -90,24 +128,45 @@ export default function VerificationDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Real-time Toggle */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Verification Dashboard</h2>
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-600">Real-time updates</span>
+      {/* Dashboard Header & Controls */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-2xl font-bold text-slate-800">Verification Dashboard</h2>
+        
+        {!hasStarted ? (
           <button
-            onClick={() => setIsRealTime(!isRealTime)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full ${
-              isRealTime ? 'bg-blue-600' : 'bg-gray-200'
-            } transition-colors`}
+            onClick={startDemo}
+            disabled={isSimulating}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-                isRealTime ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
+            {isSimulating ? 'Starting Demo...' : 'Start Demo'}
           </button>
-        </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <button
+              onClick={addNewVerification}
+              disabled={isSimulating || isRealTime}
+              className="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-4 py-2 rounded-lg font-bold hover:from-emerald-700 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
+            >
+              {isSimulating ? 'Processing...' : 'Add Verification'}
+            </button>
+            
+            <div className="flex items-center space-x-3">
+              <span className="text-sm font-semibold text-slate-600">Auto-simulate</span>
+              <button
+                onClick={() => setIsRealTime(!isRealTime)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isRealTime ? 'bg-blue-600' : 'bg-slate-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isRealTime ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Metrics Cards */}
@@ -196,29 +255,51 @@ export default function VerificationDashboard() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {recentVerifications.map((verification) => (
-                <tr key={verification.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {verification.user}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {verification.type}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(verification.status)}`}>
-                      {verification.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getRiskColor(verification.riskScore)}`}>
-                      {verification.riskScore}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {formatTimeAgo(verification.timestamp)}
+              {recentVerifications.length > 0 ? (
+                recentVerifications.map((verification) => (
+                  <tr key={verification.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {verification.user}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {verification.type}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(verification.status)}`}>
+                        {verification.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getRiskColor(verification.riskScore)}`}>
+                        {verification.riskScore}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {formatTimeAgo(verification.timestamp)}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center">
+                      <svg className="w-12 h-12 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <h3 className="text-lg font-semibold text-slate-700 mb-2">No Verifications Yet</h3>
+                      <p className="text-slate-500 mb-4">Start the demo or add verifications to see activity here</p>
+                      {!hasStarted && (
+                        <button
+                          onClick={startDemo}
+                          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200"
+                        >
+                          Start Demo
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

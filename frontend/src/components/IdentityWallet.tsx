@@ -16,6 +16,10 @@ export default function IdentityWallet() {
   const [identity, setIdentity] = useState<Identity | null>(null)
   const [isRegistering, setIsRegistering] = useState(false)
   const [selectedLevel, setSelectedLevel] = useState<VerificationLevel>('BASIC')
+  const [selectedProofType, setSelectedProofType] = useState('age_over_18')
+  const [isGeneratingProof, setIsGeneratingProof] = useState(false)
+  const [generatedProof, setGeneratedProof] = useState<string | null>(null)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const verificationLevels = [
     { level: 'BASIC', name: 'Basic Humanity', description: 'Captcha-like proof of humanity' },
@@ -39,7 +43,11 @@ export default function IdentityWallet() {
       attributes: ['verified_human']
     })
     
+    setShowSuccess(true)
     setIsRegistering(false)
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => setShowSuccess(false), 3000)
   }
 
   const handleUpgradeLevel = async (newLevel: VerificationLevel) => {
@@ -58,27 +66,65 @@ export default function IdentityWallet() {
     setIsRegistering(false)
   }
 
+  const handleGenerateZKProof = async () => {
+    setIsGeneratingProof(true)
+    setGeneratedProof(null)
+    
+    // Simulate ZK proof generation
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    
+    const proofData = {
+      type: selectedProofType,
+      timestamp: Date.now(),
+      proof: '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+      nullifierHash: '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+      merkleRoot: '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('')
+    }
+    
+    setGeneratedProof(JSON.stringify(proofData, null, 2))
+    setIsGeneratingProof(false)
+  }
+
+  const proofTypes = [
+    { value: 'age_over_18', label: 'Age over 18 (without revealing exact age)' },
+    { value: 'us_resident', label: 'US resident (without revealing full address)' },
+    { value: 'income_bracket', label: 'Income bracket (without revealing salary)' },
+    { value: 'professional_credential', label: 'Professional credential (without personal info)' }
+  ]
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 relative">
+      {/* Success Notification */}
+      {showSuccess && (
+        <div className="fixed top-20 right-4 bg-green-500 text-white px-6 py-4 rounded-xl shadow-lg z-50 flex items-center gap-3 animate-slide-in-right">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="font-semibold">Identity registered successfully!</span>
+        </div>
+      )}
       {/* Identity Status Card */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Digital Identity</h2>
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
+        <h2 className="text-2xl font-bold text-slate-800 mb-6">Your Digital Identity</h2>
         
         {identity ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="font-medium text-green-700">Verified Identity</span>
+                <div className="flex items-center space-x-3">
+                  <div className="relative">
+                    <div className="w-4 h-4 bg-emerald-500 rounded-full"></div>
+                    <div className="absolute inset-0 w-4 h-4 bg-emerald-500 rounded-full animate-ping opacity-75"></div>
+                  </div>
+                  <span className="font-bold text-emerald-700 text-lg">Verified Identity</span>
                 </div>
                 <p className="text-sm text-gray-600 mt-1">
                   Level: {verificationLevels.find(l => l.level === identity.level)?.name}
                 </p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-blue-600">{identity.reputationScore}</div>
-                <div className="text-sm text-gray-500">Reputation Score</div>
+                <div className="text-3xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{identity.reputationScore}</div>
+                <div className="text-sm font-semibold text-slate-500">Reputation Score</div>
               </div>
             </div>
             
@@ -97,13 +143,13 @@ export default function IdentityWallet() {
           </div>
         ) : (
           <div className="text-center py-8">
-            <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full mx-auto mb-6 flex items-center justify-center shadow-inner">
               <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Identity Registered</h3>
-            <p className="text-gray-600 mb-6">Create your zero-knowledge identity to get started</p>
+            <h3 className="text-xl font-bold text-slate-800 mb-3">No Identity Registered</h3>
+            <p className="text-slate-600 mb-8 leading-relaxed">Create your zero-knowledge identity to get started with secure, privacy-preserving verification</p>
             
             <div className="max-w-sm mx-auto mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -125,9 +171,14 @@ export default function IdentityWallet() {
             <button
               onClick={handleRegisterIdentity}
               disabled={isRegistering}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              {isRegistering ? 'Registering...' : 'Register Identity'}
+              {isRegistering ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Registering...</span>
+                </div>
+              ) : 'Register Identity'}
             </button>
           </div>
         )}
@@ -135,8 +186,8 @@ export default function IdentityWallet() {
 
       {/* Verification Levels */}
       {identity && (
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Upgrade Verification Level</h2>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6">Upgrade Verification Level</h2>
           <div className="space-y-3">
             {verificationLevels.map((level) => {
               const isCurrentLevel = level.level === identity.level
@@ -169,9 +220,16 @@ export default function IdentityWallet() {
                         <button
                           onClick={() => handleUpgradeLevel(level.level as VerificationLevel)}
                           disabled={isRegistering}
-                          className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
+                          className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-sm font-bold rounded-xl hover:from-emerald-700 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:hover:scale-100"
                         >
-                          {isRegistering ? 'Processing...' : 'Upgrade'}
+                          {isRegistering ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              <span>Processing...</span>
+                            </div>
+                          ) : (
+                            'Upgrade'
+                          )}
                         </button>
                       )}
                     </div>
@@ -185,27 +243,138 @@ export default function IdentityWallet() {
 
       {/* Demo ZK Proof Generation */}
       {identity && (
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Generate Zero-Knowledge Proof</h2>
-          <div className="space-y-4">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6">Generate Zero-Knowledge Proof</h2>
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-slate-700 mb-3">
                 Proof Type
               </label>
-              <select className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                <option>Age over 18 (without revealing exact age)</option>
-                <option>US resident (without revealing full address)</option>
-                <option>Income bracket (without revealing salary)</option>
-                <option>Professional credential (without personal info)</option>
+              <select 
+                value={selectedProofType}
+                onChange={(e) => setSelectedProofType(e.target.value)}
+                className="w-full p-4 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-slate-700 bg-white/50"
+              >
+                {proofTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
               </select>
             </div>
             
-            <button className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
-              Generate ZK Proof
+            <button 
+              onClick={handleGenerateZKProof}
+              disabled={isGeneratingProof}
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:hover:scale-100"
+            >
+              {isGeneratingProof ? (
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Generating ZK Proof...</span>
+                </div>
+              ) : (
+                'Generate ZK Proof'
+              )}
             </button>
             
-            <div className="text-xs text-gray-500 text-center">
-              Zero-knowledge proofs allow verification without revealing sensitive information
+            {generatedProof && (
+              <div className="mt-6 p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl shadow-lg">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-bold text-green-800 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    Zero-Knowledge Proof Generated
+                  </h4>
+                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                    Verified
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="bg-white p-4 rounded-lg border border-green-100">
+                    <h5 className="font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Proof Type
+                    </h5>
+                    <p className="text-slate-600 font-medium">
+                      {proofTypes.find(p => p.value === selectedProofType)?.label}
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-lg border border-green-100">
+                    <h5 className="font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      Privacy Level
+                    </h5>
+                    <p className="text-slate-600 font-medium">Zero Knowledge</p>
+                  </div>
+                </div>
+
+                <div className="bg-white p-4 rounded-lg border border-green-100 mb-4">
+                  <h5 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    Cryptographic Proof Data
+                  </h5>
+                  
+                  <div className="space-y-3 text-sm">
+                    {JSON.parse(generatedProof) && Object.entries(JSON.parse(generatedProof)).map(([key, value]) => (
+                      <div key={key} className="flex flex-col">
+                        <span className="font-semibold text-slate-600 capitalize mb-1">
+                          {key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim()}:
+                        </span>
+                        <div className="bg-slate-50 p-2 rounded font-mono text-xs text-slate-700 break-all border">
+                          {typeof value === 'string' ? value : JSON.stringify(value)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <button 
+                    onClick={() => navigator.clipboard.writeText(generatedProof)}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold text-sm flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy Proof
+                  </button>
+                  
+                  <button 
+                    onClick={() => setGeneratedProof(null)}
+                    className="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 transition-all duration-200 font-semibold text-sm flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Clear
+                  </button>
+                </div>
+
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-xs text-blue-700 leading-relaxed">
+                    <strong>🔒 Privacy Preserved:</strong> This proof mathematically verifies your claim without revealing any sensitive personal information. The verifier can confirm the validity of your statement while your actual data remains completely private.
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            <div className="text-sm text-slate-600 text-center leading-relaxed bg-blue-50 p-4 rounded-xl border border-blue-200">
+              <svg className="w-5 h-5 text-blue-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <strong>Zero-knowledge proofs</strong> allow verification without revealing sensitive information. The proof confirms your claim while keeping your personal data completely private.
             </div>
           </div>
         </div>
