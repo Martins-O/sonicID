@@ -134,7 +134,7 @@ export default function AboutPage() {
         </div>
 
         {/* Team Section */}
-        <div className="mb-20">
+        {/* <div className="mb-20">
           <h2 className="text-3xl font-bold text-center text-slate-800 mb-12">Meet Our Team</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {teamMembers.map((member, index) => (
@@ -146,7 +146,7 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Timeline */}
         <div className="mb-20">

@@ -42,29 +42,29 @@ export default function HomePage() {
 
   const teamMembers = [
     {
-      name: "Alex Chen",
+      name: "Martins O Jojolola",
       role: "Founder & CEO",
-      bio: "Former cryptography researcher at MIT with 10+ years in zero-knowledge systems",
+      bio: "Software Engineer and Blockchain FullStack Engineer",
       avatar: "👨‍💻"
     },
-    {
-      name: "Sarah Rodriguez", 
-      role: "Chief Technology Officer",
-      bio: "Blockchain architect and former lead engineer at Ethereum Foundation",
-      avatar: "👩‍💻"
-    },
-    {
-      name: "Marcus Johnson",
-      role: "Head of Security",
-      bio: "Cybersecurity expert with extensive background in privacy-preserving technologies",
-      avatar: "🔒"
-    },
-    {
-      name: "Dr. Emily Watson",
-      role: "Chief Scientist",
-      bio: "PhD in Applied Cryptography, published researcher in zero-knowledge proofs",
-      avatar: "🔬"
-    }
+    // {
+    //   name: "Sarah Rodriguez", 
+    //   role: "Chief Technology Officer",
+    //   bio: "Blockchain architect and former lead engineer at Ethereum Foundation",
+    //   avatar: "👩‍💻"
+    // },
+    // {
+    //   name: "Marcus Johnson",
+    //   role: "Head of Security",
+    //   bio: "Cybersecurity expert with extensive background in privacy-preserving technologies",
+    //   avatar: "🔒"
+    // },
+    // {
+    //   name: "Dr. Emily Watson",
+    //   role: "Chief Scientist",
+    //   bio: "PhD in Applied Cryptography, published researcher in zero-knowledge proofs",
+    //   avatar: "🔬"
+    // }
   ]
 
   const technicalConcepts = [
@@ -473,15 +473,17 @@ export default function HomePage() {
             {/* Team Section */}
             <div>
               <h2 className="text-3xl font-bold text-center text-slate-800 mb-12">Meet Our Team</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {teamMembers.map((member, index) => (
-                  <div key={index} className="bg-white p-6 rounded-2xl shadow-lg border border-white/20 text-center">
-                    <div className="text-4xl mb-4">{member.avatar}</div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-2">{member.name}</h3>
-                    <p className="text-blue-600 font-semibold mb-3">{member.role}</p>
-                    <p className="text-slate-600 text-sm leading-relaxed">{member.bio}</p>
-                  </div>
-                ))}
+              <div className="flex justify-center">
+                <div className="grid grid-cols-1 gap-6">
+                  {teamMembers.map((member, index) => (
+                    <div key={index} className="bg-white p-6 rounded-2xl shadow-lg border border-white/20 text-center">
+                      <div className="text-4xl mb-4">{member.avatar}</div>
+                      <h3 className="text-xl font-bold text-slate-800 mb-2">{member.name}</h3>
+                      <p className="text-blue-600 font-semibold mb-3">{member.role}</p>
+                      <p className="text-slate-600 text-sm leading-relaxed">{member.bio}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
